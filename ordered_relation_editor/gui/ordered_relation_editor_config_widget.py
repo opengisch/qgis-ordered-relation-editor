@@ -28,7 +28,7 @@ class OrderedRelationEditorConfigWidget(QgsAbstractRelationEditorConfigWidget, W
     def config(self):
         return {
             'ordering_field': self.mOrderingFieldComboBox.currentField(),
-            'image_path': self.mImagePathExpressionWidget.currentField()
+            'image_path': self.mImagePathExpressionWidget.currentField()[0]
         }
 
     def setConfig(self, config):

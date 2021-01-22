@@ -17,6 +17,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget):
     def __init__(self, config, parent):
         super().__init__(config, parent)
 
+
     def config(self):
         return {
 
