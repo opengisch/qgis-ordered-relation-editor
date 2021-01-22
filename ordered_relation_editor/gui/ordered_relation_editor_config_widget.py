@@ -8,14 +8,19 @@
 #
 # -----------------------------------------------------------
 
+import os
+from qgis.PyQt.uic import loadUiType
 from qgis.PyQt.QtWidgets import QGridLayout, QLabel
 from qgis.gui import QgsAbstractRelationEditorConfigWidget
 
+WidgetUi, _ = loadUiType(os.path.join(os.path.dirname(__file__), '../ui/ordered_relation_editor_config_widget.ui'))
 
-class OrderedRelationEditorConfigWidget(QgsAbstractRelationEditorConfigWidget):
+
+class OrderedRelationEditorConfigWidget(QgsAbstractRelationEditorConfigWidget, WidgetUi):
 
     def __init__(self, relation, parent):
         super().__init__(relation, parent)
+        self.setupUi(self)
         self.relation = relation
         self.mOrderingFieldComboBox.setLayer(relation.referencingLayer())
         self.mImagePathExpressionWidget.setLayer(relation.referencingLayer())

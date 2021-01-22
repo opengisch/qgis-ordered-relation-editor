@@ -8,6 +8,7 @@
 #
 # -----------------------------------------------------------
 
+from qgis.PyQt.QtCore import QObject
 from qgis.gui import QgsAbstractRelationEditorWidgetFactory
 from ordered_relation_editor.gui.ordered_relation_editor_widget import OrderedRelationEditorWidget
 from ordered_relation_editor.gui.ordered_relation_editor_config_widget import OrderedRelationEditorConfigWidget
@@ -20,7 +21,7 @@ class OrderedRelationEditorWidgetFactory(QgsAbstractRelationEditorWidgetFactory)
         return WIDGET_TYPE
 
     def name(self):
-        return self.tr("Ordered relation editor")
+        return "Ordered relation editor"
 
     def create(self, config, parent):
         return OrderedRelationEditorWidget(config, parent)
