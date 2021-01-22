@@ -9,8 +9,8 @@
 # -----------------------------------------------------------
 
 from qgis.gui import QgsAbstractRelationEditorWidgetFactory
-from orderer_relation_editor.gui.ordered_relation_editor_widget import OrderedRelationEditorWidget
-from orderer_relation_editor.gui.ordered_relation_editor_config_widget import OrderedRelationEditorConfigWidget
+from ordered_relation_editor.gui.ordered_relation_editor_widget import OrderedRelationEditorWidget
+from ordered_relation_editor.gui.ordered_relation_editor_config_widget import OrderedRelationEditorConfigWidget
 
 WIDGET_TYPE = "ordered_relation_editor"
 

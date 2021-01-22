@@ -11,7 +11,7 @@
 import os
 from qgis.PyQt.QtCore import QCoreApplication, QTranslator, QObject, QLocale, QSettings
 from qgis.gui import QgisInterface, QgsGui
-from orderer_relation_editor.gui.ordered_relation_editor_widget_factory import OrderedRelationEditorWidgetFactory, WIDGET_TYPE
+from ordered_relation_editor.gui.ordered_relation_editor_widget_factory import OrderedRelationEditorWidgetFactory, WIDGET_TYPE
 
 DEBUG = True
 
