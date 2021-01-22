@@ -19,8 +19,8 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="widget" native="true"/>
-     <widget class="QWidget" name="widget_2" native="true"/>
+     <widget class="QWidget" name="mListView" native="true"/>
+     <widget class="QWidget" name="mAttributeFormView" native="true"/>
     </widget>
    </item>
   </layout>
