@@ -1,0 +1,8 @@
+venv
+.idea
+__pycache__
+*.orig
+i18n
+.DS_Store
+github_deploy_key.out
+ordered_relation_editor/resources_rcs.py
