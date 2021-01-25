@@ -31,10 +31,8 @@ class OrderedRelationEditorPlugin(QObject):
         self.translator.load(qgis_locale, 'actions_for_relations', '_', locale_path)
         QCoreApplication.installTranslator(self.translator)
 
-        QgsGui.relationWidgetRegistry().addRelationWidget(OrderedRelationEditorWidgetFactory())
-
     def initGui(self):
-        pass
+        QgsGui.relationWidgetRegistry().addRelationWidget(OrderedRelationEditorWidgetFactory())
 
     def unload(self):
         QgsGui.relationWidgetRegistry().removeRelationWidget(WIDGET_TYPE)

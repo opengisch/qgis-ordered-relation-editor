@@ -10,7 +10,7 @@
 
 from enum import Enum
 from qgis.PyQt.QtCore import Qt, QObject, QAbstractTableModel, QModelIndex
-
+from qgis.core import QgsRelation, QgsFeature, QgsExpression, QgsExpressionContext
 
 class Role(Enum):
     RelationRole = Qt.UserRole + 1
@@ -20,11 +20,26 @@ class Role(Enum):
 
 
 class OrderedRelationModel(QAbstractTableModel):
+
+    ImagePathRole = Qt.UserRole + 1
+
     def __init__(self, parent: QObject = None):
         super(OrderedRelationModel, self).__init__(parent)
+        self._relation = QgsRelation()
+        self._ordering_field = str()
+        self._image_path = str()
+        self._feature = QgsFeature()
+        self._related_features = []
+
+    def init(self, relation: QgsRelation, ordering_field: str, feature: QgsFeature, image_path: str):
+        self._relation = relation
+        self._ordering_field = ordering_field
+        self._image_path = image_path
+        self._feature = feature
+        self._updateData()
 
     def rowCount(self, parent: QModelIndex = ...) -> int:
-        return len(self.custom_aggregates)
+        return len(self._related_features)
 
     def columnCount(self, parent: QModelIndex = ...) -> int:
         return 1
@@ -40,6 +55,12 @@ class OrderedRelationModel(QAbstractTableModel):
         if index.row() < 0 or index.row() >= self.rowCount(QModelIndex()):
             return None
 
+        if role == self.ImagePathRole:
+            exp = QgsExpression(self._image_path)
+            context = QgsExpressionContext()
+            context.setFeature(self._related_features[index.row()])
+            return exp.evaluate(context)
+
         return None
 
     def setData(self, index: QModelIndex, value, role: int = Qt.EditRole) -> bool:
@@ -47,3 +68,25 @@ class OrderedRelationModel(QAbstractTableModel):
             return False
 
         return False
+
+    def roleNames(self):
+        return {
+            self.ImagePathRole: b'ImagePath'
+        }
+
+    def _updateData(self):
+        self.beginResetModel()
+        self._related_features = []
+
+        if len(self._ordering_field) > 0 and self._relation.isValid() and self._feature.isValid():
+            request = self._relation.getRelatedFeaturesRequest(self._feature)
+            for f in self._relation.referencingLayer().getFeatures(request):
+                self._related_features.append(f)
+
+            sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
+
+        self.endResetModel()
+
+
+
+
