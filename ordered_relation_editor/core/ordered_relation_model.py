@@ -10,7 +10,10 @@
 
 from enum import Enum
 from qgis.PyQt.QtCore import Qt, QObject, QAbstractTableModel, QModelIndex
-from qgis.core import QgsRelation, QgsFeature, QgsExpression, QgsExpressionContext
+from qgis.core import QgsRelation, QgsFeature, QgsExpression, QgsExpressionContext, QgsExpressionContextUtils, QgsMessageLog
+
+Debug = True
+
 
 class Role(Enum):
     RelationRole = Qt.UserRole + 1
@@ -58,8 +61,12 @@ class OrderedRelationModel(QAbstractTableModel):
         if role == self.ImagePathRole:
             exp = QgsExpression(self._image_path)
             context = QgsExpressionContext()
+            context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
             context.setFeature(self._related_features[index.row()])
-            return exp.evaluate(context)
+            res = exp.evaluate(context)
+            if Debug:
+                QgsMessageLog.logMessage(res)
+            return res
 
         return None
 
