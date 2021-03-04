@@ -11,15 +11,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-
     - name: Install QGIS
       run: |
-        sudo apt-get update && sudo apt-get install python-qgis
-        pip install -U pytest
+        docker pull qgis/qgis
 
     - name: Run tests
-      run: pytest
+      run: |
+        docker run -v $(pwd):/src -w /src qgis/qgis pytest
