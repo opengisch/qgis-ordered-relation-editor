@@ -43,7 +43,7 @@ class TestImport(unittest.TestCase):
         feature = next(self.referenced_layer.getFeatures(req))
 
         self.model = OrderedRelationModel()
-        self.model.init(relation, 'rank', feature, "\"id\"")
+        self.model.init(relation, 'rank', feature, "\"id\"", "")
 
     def tearDown(self):
         QgsProject.instance().removeAllMapLayers()
