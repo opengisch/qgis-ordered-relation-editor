@@ -25,6 +25,6 @@ jobs:
 
     - name: Run tests
       run: |
-        docker run -v $(pwd):/src -w /src ${DOCKER_IMAGE} pytest
+        docker run -v ${GITHUB_WORKSPACE}:/src -w /src ${DOCKER_IMAGE} pytest
       env:
         DOCKER_IMAGE: ${{ steps.docker-build.outputs.FULL_IMAGE_NAME }}
