@@ -27,7 +27,8 @@ class OrderedRelationModel(QAbstractTableModel):
     ImagePathRole = Qt.UserRole + 1
     DesriptionRole = Qt.UserRole + 2
 
-    signal = pyqtSignal()
+    layerEditingEnabledChanged = pyqtSignal()
+    currentFeatureChanged = pyqtSignal(QgsFeature)
 
     def __init__(self, parent: QObject = None):
         super(OrderedRelationModel, self).__init__(parent)
@@ -59,14 +60,14 @@ class OrderedRelationModel(QAbstractTableModel):
     def editingStopped(self):
         self.layerEditingEnabled = False
 
-    @pyqtProperty(int, notify=signal)
+    @pyqtProperty(int, notify=layerEditingEnabledChanged)
     def layerEditingEnabled(self):
         return self._layerEditingEnabled
 
     @layerEditingEnabled.setter
     def layerEditingEnabled(self, value):
         self._layerEditingEnabled = value
-        self.signal.emit()
+        self.layerEditingEnabledChanged.emit()
 
     def rowCount(self, parent: QModelIndex = ...) -> int:
         return len(self._related_features)
@@ -144,6 +145,10 @@ class OrderedRelationModel(QAbstractTableModel):
         self.endResetModel()
         # TODO: why do we need this, shoud be good before
         self._updateData()
+
+    @pyqtSlot(int)
+    def onViewCurrentIndexChanged(self, index):
+        self.currentFeatureChanged.emit(self._related_features[index])
 
     def roleNames(self):
         return {

@@ -46,13 +46,14 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.setupUi(self)
         self.attributeForm = None
 
-        print('__init__')
+        print('__init__ OrderedRelationEditorWidget')
 
         self.ordering_field = str()
         self.image_path = str()
         self.description = str()
 
         self.model = OrderedRelationModel()
+        self.model.currentFeatureChanged.connect(self.onCurrentFeatureChanged)
 
         # QML display of images
         layout = QVBoxLayout()
@@ -84,5 +85,9 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
     def parentFormValueChanged(self, attribute, newValue):
         if self.attribute_form:
             self.attributeForm.parentFormValueChanged(attribute, newValue)
+
+    def onCurrentFeatureChanged(self, feature):
+        if self.attributeForm:
+            self.attributeForm.setFeature(feature)
 
 

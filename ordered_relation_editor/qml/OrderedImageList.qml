@@ -28,8 +28,15 @@ Rectangle {
 
             onPressAndHold: held = true
             onReleased: {
-               held = false
-               orderedModel.moveitems(indexFrom, indexTo)
+               if (held === true)
+               {
+                   held = false
+                   orderedModel.moveitems(indexFrom, indexTo)
+               }
+               else
+               {
+                   listView.currentIndex = index
+               }
             }
 
             Rectangle {
@@ -43,7 +50,7 @@ Rectangle {
                 border.width: 1
                 border.color: "lightsteelblue"
 
-                color: dragArea.held ? "lightsteelblue" : "white"
+                color: dragArea.held ? "coral" : listView.currentIndex === index ? "lightsteelblue" : "white"
                 Behavior on color { ColorAnimation { duration: 100 } }
 
                 radius: 2
@@ -90,7 +97,8 @@ Rectangle {
     }
 
     ListView {
-        id: view
+        id: listView
+        focus: true
 
         anchors { fill: parent; margins: 2 }
 
@@ -98,5 +106,9 @@ Rectangle {
 
         spacing: 4
         cacheBuffer: 50
+
+        onCurrentIndexChanged: {
+            orderedModel.onViewCurrentIndexChanged(listView.currentIndex)
+        }
     }
 }
