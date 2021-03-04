@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  release:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +17,7 @@ jobs:
         python-version: 3.8
 
     - name: Install QGIS
-      run: apt-get update && apt-get install qgis
+      run: sudo apt-get update && sudo apt-get install qgis
 
     - name: Run tests
       run: nose2 -v
