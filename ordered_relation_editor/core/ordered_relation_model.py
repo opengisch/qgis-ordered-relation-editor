@@ -140,11 +140,10 @@ class OrderedRelationModel(QAbstractTableModel):
             res = self._relation.referencingLayer().changeAttributeValue(f.id(), field_index, f[self._ordering_field])
             print(res)
 
-        sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
+        self._related_features = sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
 
         self.endResetModel()
-        # TODO: why do we need this, shoud be good before
-        self.reloadData()
+
 
     @pyqtSlot(int)
     def onViewCurrentIndexChanged(self, index):
@@ -165,7 +164,7 @@ class OrderedRelationModel(QAbstractTableModel):
             for f in self._relation.referencingLayer().getFeatures(request):
                 self._related_features.append(f)
 
-            sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
+            self._related_features = sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
 
         self.endResetModel()
 

@@ -13,7 +13,7 @@ Rectangle {
 
         MouseArea {
             id: dragArea
-            pressAndHoldInterval: 100
+            pressAndHoldInterval: 130
 
             property bool held: false
 
@@ -28,7 +28,9 @@ Rectangle {
 
             onPressAndHold: {
                 if (orderedModel.layerEditingEnabled)
+                {
                     held = true
+                }
             }
             onReleased: {
                if (held === true)
@@ -36,9 +38,10 @@ Rectangle {
                    held = false
                    orderedModel.moveitems(indexFrom, indexTo)
                }
-               else
+               else if (listView.currentIndex !== dragArea.DelegateModel.itemsIndex)
                {
-                   listView.currentIndex = index
+                   listView.currentIndex = dragArea.DelegateModel.itemsIndex
+                   orderedModel.onViewCurrentIndexChanged(listView.currentIndex)
                }
             }
 
@@ -53,7 +56,7 @@ Rectangle {
                 border.width: 1
                 border.color: "lightsteelblue"
 
-                color: dragArea.held ? "coral" : listView.currentIndex === index ? "lightsteelblue" : "white"
+                color: dragArea.held ? "coral" : listView.currentIndex === dragArea.DelegateModel.itemsIndex ? "lightsteelblue" : "white"
                 Behavior on color { ColorAnimation { duration: 100 } }
 
                 radius: 2
@@ -109,9 +112,5 @@ Rectangle {
 
         spacing: 4
         cacheBuffer: 50
-
-        onCurrentIndexChanged: {
-            orderedModel.onViewCurrentIndexChanged(listView.currentIndex)
-        }
     }
 }
