@@ -13,7 +13,8 @@ import os
 from qgis.PyQt.QtCore import QUrl, QObject, pyqtSignal, pyqtProperty
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
-from qgis.gui import QgsAbstractRelationEditorWidget
+from qgis.core import QgsFeature
+from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm
 from ordered_relation_editor.core.ordered_relation_model import OrderedRelationModel
 
 WidgetUi, _ = loadUiType(os.path.join(os.path.dirname(__file__), '../ui/ordered_relation_editor_widget.ui'))
@@ -43,6 +44,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
     def __init__(self, config, parent):
         super().__init__(config, parent)
         self.setupUi(self)
+        self.attributeForm = None
 
         print('__init__')
 
@@ -52,6 +54,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
         self.model = OrderedRelationModel()
 
+        # QML display of images
         layout = QVBoxLayout()
         self.view = QQuickWidget()
         self.view.rootContext().setContextProperty("orderedModel", self.model)
@@ -70,5 +73,16 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.description = config['description']
 
     def updateUi(self):
-        print('updateUi')
+        # print('updateUi')
         self.model.init(self.relation(), self.ordering_field, self.feature(), self.image_path, self.description)
+
+        # form view
+        self.attributeForm = QgsAttributeForm(self.relation().referencingLayer(), QgsFeature(), self.editorContext())
+        self.mAttributeFormScrollArea.setWidgetResizable(True)
+        self.mAttributeFormScrollArea.setWidget(self.attributeForm)
+
+    def parentFormValueChanged(self, attribute, newValue):
+        if self.attribute_form:
+            self.attributeForm.parentFormValueChanged(attribute, newValue)
+
+
