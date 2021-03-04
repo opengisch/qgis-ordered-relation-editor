@@ -23,14 +23,17 @@ class OrderedRelationEditorConfigWidget(QgsAbstractRelationEditorConfigWidget, W
         self.setupUi(self)
         self.relation = relation
         self.mOrderingFieldComboBox.setLayer(relation.referencingLayer())
+        self.mDescriptionExpressionWidget.setLayer(relation.referencingLayer())
         self.mImagePathExpressionWidget.setLayer(relation.referencingLayer())
 
     def config(self):
         return {
             'ordering_field': self.mOrderingFieldComboBox.currentField(),
+            'description': self.mDescriptionExpressionWidget.currentField()[0],
             'image_path': self.mImagePathExpressionWidget.currentField()[0]
         }
 
     def setConfig(self, config):
         self.mOrderingFieldComboBox.setField(config.get('ordering_field'))
+        self.mDescriptionExpressionWidget.setField(config.get('description'))
         self.mImagePathExpressionWidget.setField(config.get('image_path'))

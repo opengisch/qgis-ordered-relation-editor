@@ -5,7 +5,7 @@ import QtQml.Models 2.14
 Rectangle {
     id: root
 
-    width: 300; height: 400
+    width: 600; height: 400
 
     Component {
         id: dragDelegate
@@ -66,7 +66,7 @@ Rectangle {
                     id: row
                     anchors { fill: parent; margins: 2 }
                     Image { source: ImagePath }
-                    Text { text: ImagePath }
+                    Text { text: Description }
                 }
             }
             DropArea {

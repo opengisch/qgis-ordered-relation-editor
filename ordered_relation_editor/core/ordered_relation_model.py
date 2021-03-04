@@ -25,6 +25,7 @@ class Role(Enum):
 class OrderedRelationModel(QAbstractTableModel):
 
     ImagePathRole = Qt.UserRole + 1
+    DesriptionRole = Qt.UserRole + 2
 
     signal = pyqtSignal()
 
@@ -33,13 +34,15 @@ class OrderedRelationModel(QAbstractTableModel):
         self._relation = QgsRelation()
         self._ordering_field = str()
         self._image_path = str()
+        self._description = str()
         self._feature = QgsFeature()
         self._related_features = []
 
-    def init(self, relation: QgsRelation, ordering_field: str, feature: QgsFeature, image_path: str):
+    def init(self, relation: QgsRelation, ordering_field: str, feature: QgsFeature, image_path: str, description: str):
         self._relation = relation
         self._ordering_field = ordering_field
         self._image_path = image_path
+        self._description = description
         self._feature = feature
         self._updateData()
 
@@ -92,6 +95,16 @@ class OrderedRelationModel(QAbstractTableModel):
             #     QgsMessageLog.logMessage(res)
             return res
 
+        if role == self.DesriptionRole:
+            exp = QgsExpression(self._description)
+            context = QgsExpressionContext()
+            context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
+            context.setFeature(self._related_features[index.row()])
+            res = exp.evaluate(context)
+            #if Debug:
+            #     QgsMessageLog.logMessage(res)
+            return res
+
         return None
 
     def setData(self, index: QModelIndex, value, role: int = Qt.EditRole) -> bool:
@@ -134,7 +147,8 @@ class OrderedRelationModel(QAbstractTableModel):
 
     def roleNames(self):
         return {
-            self.ImagePathRole: b'ImagePath'
+            self.ImagePathRole: b'ImagePath',
+            self.DesriptionRole: b'Description'
         }
 
     def _updateData(self):

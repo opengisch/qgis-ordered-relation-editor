@@ -48,6 +48,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
         self.ordering_field = str()
         self.image_path = str()
+        self.description = str()
 
         self.model = OrderedRelationModel()
 
@@ -66,7 +67,8 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
     def setConfig(self, config):
         self.ordering_field = config['ordering_field']
         self.image_path = config['image_path']
+        self.description = config['description']
 
     def updateUi(self):
         print('updateUi')
-        self.model.init(self.relation(), self.ordering_field, self.feature(), self.image_path)
+        self.model.init(self.relation(), self.ordering_field, self.feature(), self.image_path, self.description)
