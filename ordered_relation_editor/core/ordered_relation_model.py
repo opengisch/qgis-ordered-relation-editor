@@ -9,7 +9,7 @@
 # -----------------------------------------------------------
 
 from enum import Enum
-from qgis.PyQt.QtCore import pyqtSlot, pyqtProperty, Qt, QObject, QAbstractTableModel, QModelIndex
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, pyqtProperty, Qt, QObject, QAbstractTableModel, QModelIndex
 from qgis.core import QgsRelation, QgsFeature, QgsExpression, QgsExpressionContext, QgsExpressionContextUtils, QgsMessageLog
 
 Debug = True
@@ -25,6 +25,8 @@ class Role(Enum):
 class OrderedRelationModel(QAbstractTableModel):
 
     ImagePathRole = Qt.UserRole + 1
+
+    signal = pyqtSignal()
 
     def __init__(self, parent: QObject = None):
         super(OrderedRelationModel, self).__init__(parent)
@@ -44,6 +46,8 @@ class OrderedRelationModel(QAbstractTableModel):
         self._relation.referencingLayer().editingStarted.connect(self.editingStarted)
         self._relation.referencingLayer().editingStopped.connect(self.editingStopped)
 
+        self.layerEditingEnabled = self._relation.referencingLayer().isEditable()
+
     @pyqtSlot()
     def editingStarted(self):
         self.layerEditingEnabled = True
@@ -52,13 +56,14 @@ class OrderedRelationModel(QAbstractTableModel):
     def editingStopped(self):
         self.layerEditingEnabled = False
 
-    @pyqtProperty(int)
+    @pyqtProperty(int, notify=signal)
     def layerEditingEnabled(self):
         return self._layerEditingEnabled
 
     @layerEditingEnabled.setter
     def layerEditingEnabled(self, value):
         self._layerEditingEnabled = value
+        self.signal.emit()
 
     def rowCount(self, parent: QModelIndex = ...) -> int:
         return len(self._related_features)
