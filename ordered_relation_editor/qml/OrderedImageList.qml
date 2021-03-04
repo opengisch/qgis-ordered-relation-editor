@@ -13,6 +13,7 @@ Rectangle {
         MouseArea {
             id: dragArea
             pressAndHoldInterval: 100
+            enabled: orderedModel.layerEditingEnabled
 
             property bool held: false
 

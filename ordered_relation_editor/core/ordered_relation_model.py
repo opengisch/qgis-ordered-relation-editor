@@ -9,7 +9,7 @@
 # -----------------------------------------------------------
 
 from enum import Enum
-from qgis.PyQt.QtCore import pyqtSlot, Qt, QObject, QAbstractTableModel, QModelIndex
+from qgis.PyQt.QtCore import pyqtSlot, pyqtProperty, Qt, QObject, QAbstractTableModel, QModelIndex
 from qgis.core import QgsRelation, QgsFeature, QgsExpression, QgsExpressionContext, QgsExpressionContextUtils, QgsMessageLog
 
 Debug = True
@@ -40,6 +40,25 @@ class OrderedRelationModel(QAbstractTableModel):
         self._image_path = image_path
         self._feature = feature
         self._updateData()
+
+        self._relation.referencingLayer().editingStarted.connect(self.editingStarted)
+        self._relation.referencingLayer().editingStopped.connect(self.editingStopped)
+
+    @pyqtSlot()
+    def editingStarted(self):
+        self.layerEditingEnabled = True
+
+    @pyqtSlot()
+    def editingStopped(self):
+        self.layerEditingEnabled = False
+
+    @pyqtProperty(int)
+    def layerEditingEnabled(self):
+        return self._layerEditingEnabled
+
+    @layerEditingEnabled.setter
+    def layerEditingEnabled(self, value):
+        self._layerEditingEnabled = value
 
     def rowCount(self, parent: QModelIndex = ...) -> int:
         return len(self._related_features)
@@ -105,6 +124,7 @@ class OrderedRelationModel(QAbstractTableModel):
         sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
 
         self.endResetModel()
+        # TODO: why do we need this, shoud be good before
         self._updateData()
 
     def roleNames(self):
