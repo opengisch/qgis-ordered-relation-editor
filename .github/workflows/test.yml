@@ -17,7 +17,9 @@ jobs:
         python-version: 3.8
 
     - name: Install QGIS
-      run: sudo apt-get update && sudo apt-get install python-qgis pytest
+      run: |
+        sudo apt-get update && sudo apt-get install python-qgis
+        pip install -U pytest
 
     - name: Run tests
       run: pytest
