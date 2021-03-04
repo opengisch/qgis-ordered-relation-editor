@@ -10,7 +10,7 @@
 
 from PyQt5.QtQuickWidgets import QQuickWidget
 import os
-from qgis.PyQt.QtCore import QUrl, QObject, pyqtSignal, pyqtProperty
+from qgis.PyQt.QtCore import QUrl
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
 from qgis.core import QgsFeature

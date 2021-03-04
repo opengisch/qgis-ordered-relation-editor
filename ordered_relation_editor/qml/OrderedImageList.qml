@@ -14,7 +14,6 @@ Rectangle {
         MouseArea {
             id: dragArea
             pressAndHoldInterval: 100
-            enabled: orderedModel.layerEditingEnabled
 
             property bool held: false
 
@@ -27,7 +26,10 @@ Rectangle {
             drag.target: held ? content : undefined
             drag.axis: Drag.YAxis
 
-            onPressAndHold: held = true
+            onPressAndHold: {
+                if (orderedModel.layerEditingEnabled)
+                    held = true
+            }
             onReleased: {
                if (held === true)
                {
