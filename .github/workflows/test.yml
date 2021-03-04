@@ -13,8 +13,9 @@ jobs:
 
     - name: Install QGIS
       run: |
-        docker pull qgis/qgis
+        cd .docker
+        docker build -f .docker/test.Dockerfile -t qgis-test .
 
     - name: Run tests
       run: |
-        docker run -v $(pwd):/src -w /src qgis/qgis pytest
+        docker run -v $(pwd):/src -w /src qgis-test pytest
