@@ -45,7 +45,7 @@ class OrderedRelationModel(QAbstractTableModel):
         self._image_path = image_path
         self._description = description
         self._feature = feature
-        self._updateData()
+        self.reloadData()
 
         self._relation.referencingLayer().editingStarted.connect(self.editingStarted)
         self._relation.referencingLayer().editingStopped.connect(self.editingStopped)
@@ -144,7 +144,7 @@ class OrderedRelationModel(QAbstractTableModel):
 
         self.endResetModel()
         # TODO: why do we need this, shoud be good before
-        self._updateData()
+        self.reloadData()
 
     @pyqtSlot(int)
     def onViewCurrentIndexChanged(self, index):
@@ -156,7 +156,7 @@ class OrderedRelationModel(QAbstractTableModel):
             self.DesriptionRole: b'Description'
         }
 
-    def _updateData(self):
+    def reloadData(self):
         self.beginResetModel()
         self._related_features = []
 

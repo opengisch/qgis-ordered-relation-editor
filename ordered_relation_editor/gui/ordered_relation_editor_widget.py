@@ -76,6 +76,10 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
     def onCurrentFeatureChanged(self, feature):
         if self.attribute_form:
+            if self.relation().referencingLayer().isEditable():
+                if self.attribute_form.save():
+                    self.model.reloadData()
+
             self.attribute_form.setFeature(feature)
 
 
