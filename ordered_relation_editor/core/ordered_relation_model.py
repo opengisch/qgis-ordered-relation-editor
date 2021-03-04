@@ -95,14 +95,17 @@ class OrderedRelationModel(QAbstractTableModel):
         for i in range(start_index, end_index+1):
             f = self._related_features[i]
             if i == index_from:
-                f[self._ordering_field] = index_to + 1 # ranks are index +1 (start at 1)
+                self._related_features[i][self._ordering_field] = index_to + 1  # ranks are index +1 (start at 1)
             else:
-                f[self._ordering_field] += delta
+                self._related_features[i][self._ordering_field] += delta
 
             res = self._relation.referencingLayer().changeAttributeValue(f.id(), field_index, f[self._ordering_field])
             print(res)
 
+        sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
+
         self.endResetModel()
+        self._updateData()
 
     def roleNames(self):
         return {
