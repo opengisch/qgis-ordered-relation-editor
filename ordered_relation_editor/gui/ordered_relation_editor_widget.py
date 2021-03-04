@@ -83,7 +83,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.mAttributeFormScrollArea.setWidget(self.attributeForm)
 
     def parentFormValueChanged(self, attribute, newValue):
-        if self.attribute_form:
+        if self.attributeForm:
             self.attributeForm.parentFormValueChanged(attribute, newValue)
 
     def onCurrentFeatureChanged(self, feature):
