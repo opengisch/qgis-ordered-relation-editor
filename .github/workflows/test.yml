@@ -11,11 +11,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install QGIS
-      run: |
-        cd .docker
-        docker build -f test.Dockerfile -t qgis-test .
+
+    - name: Build QGIS testing Docker Container
+      id: docker-build
+      uses: whoan/docker-build-with-cache-action@v5
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: docker.pkg.github.com
+        image_name: qgis-test
+        dockerfile: .docker/test.Dockerfile
+        push_image_and_stages: true
 
     - name: Run tests
       run: |
-        docker run -v $(pwd):/src -w /src qgis-test pytest
+        docker run -v $(pwd):/src -w /src/ordered_relation_editor qgis-test pytest
