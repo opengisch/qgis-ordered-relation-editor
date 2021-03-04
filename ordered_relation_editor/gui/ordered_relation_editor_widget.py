@@ -14,29 +14,10 @@ from qgis.PyQt.QtCore import QUrl, QObject, pyqtSignal, pyqtProperty
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
 from qgis.core import QgsFeature
-from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm
+from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm, QgsScrollArea
 from ordered_relation_editor.core.ordered_relation_model import OrderedRelationModel
 
 WidgetUi, _ = loadUiType(os.path.join(os.path.dirname(__file__), '../ui/ordered_relation_editor_widget.ui'))
-
-
-class Foo(QObject):
-    modelChanged = pyqtSignal()
-
-    def __init__(self, parent=None):
-        QObject.__init__(self, parent)
-        self._model = OrderedRelationModel(parent)
-
-    @pyqtProperty(str, notify=modelChanged)
-    def model(self):
-        return self._model
-
-    @model.setter
-    def model(self, value):
-        if self._model == value:
-            return
-        self._model = value
-        self.modelChanged.emit()
 
 
 class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
@@ -44,7 +25,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
     def __init__(self, config, parent):
         super().__init__(config, parent)
         self.setupUi(self)
-        self.attributeForm = None
+        self.attribute_form = None
 
         print('__init__ OrderedRelationEditorWidget')
 
@@ -57,11 +38,11 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
         # QML display of images
         layout = QVBoxLayout()
-        self.view = QQuickWidget()
+        self.mListView.setLayout(layout)
+        self.view = QQuickWidget(self.mListView)
         self.view.rootContext().setContextProperty("orderedModel", self.model)
         self.view.setSource(QUrl.fromLocalFile(os.path.join(os.path.dirname(__file__), '../qml/OrderedImageList.qml')))
         layout.addWidget(self.view)
-        self.mListView.setLayout(layout)
 
     def config(self):
         return {
@@ -78,16 +59,23 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.model.init(self.relation(), self.ordering_field, self.feature(), self.image_path, self.description)
 
         # form view
-        self.attributeForm = QgsAttributeForm(self.relation().referencingLayer(), QgsFeature(), self.editorContext())
-        self.mAttributeFormScrollArea.setWidgetResizable(True)
-        self.mAttributeFormScrollArea.setWidget(self.attributeForm)
+        if self.attribute_form:
+            self.attribute_form.deleteLater()
+        self.attribute_form = QgsAttributeForm(self.relation().referencingLayer(), QgsFeature(), self.editorContext())
+        if not self.editorContext().parentContext():
+            attribute_editor_scroll_area = QgsScrollArea()
+            attribute_editor_scroll_area.setWidgetResizable(True)
+            self.mAttributeFormView.layout().addWidget(attribute_editor_scroll_area)
+            attribute_editor_scroll_area.setWidget(self.attribute_form)
+        else:
+            self.mAttributeFormView.layout().addWidget(self.attribute_form)
 
     def parentFormValueChanged(self, attribute, newValue):
-        if self.attributeForm:
-            self.attributeForm.parentFormValueChanged(attribute, newValue)
+        if self.attribute_form:
+            self.attribute_form.parentFormValueChanged(attribute, newValue)
 
     def onCurrentFeatureChanged(self, feature):
-        if self.attributeForm:
-            self.attributeForm.setFeature(feature)
+        if self.attribute_form:
+            self.attribute_form.setFeature(feature)
 
 

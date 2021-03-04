@@ -5,7 +5,8 @@ import QtQml.Models 2.14
 Rectangle {
     id: root
 
-    width: 600; height: 400
+    width: 600
+    height: 400
 
     Component {
         id: dragDelegate
@@ -72,7 +73,7 @@ Rectangle {
                 Row {
                     id: row
                     anchors { fill: parent; margins: 2 }
-                    Image { source: ImagePath }
+                    Image { source: ImagePath; width: 50; fillMode: Image.PreserveAspectFit }
                     Text { text: Description }
                 }
             }
