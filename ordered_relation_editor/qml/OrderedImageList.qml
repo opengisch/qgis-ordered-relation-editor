@@ -16,6 +16,9 @@ Rectangle {
 
             property bool held: false
 
+            property int indexFrom: -1
+            property int indexTo: -1
+
             anchors { left: parent.left; right: parent.right }
             height: content.height
 
@@ -23,7 +26,10 @@ Rectangle {
             drag.axis: Drag.YAxis
 
             onPressAndHold: held = true
-            onReleased: held = false
+            onReleased: {
+               held = false
+               orderedModel.moveitems(indexFrom, indexTo)
+            }
 
             Rectangle {
                 id: content
@@ -66,6 +72,8 @@ Rectangle {
                 anchors { fill: parent; margins: 10 }
 
                 onEntered: {
+                    if (dragArea.indexFrom === -1) dragArea.indexFrom = drag.source.DelegateModel.itemsIndex
+                    dragArea.indexTo = dragArea.DelegateModel.itemsIndex
                     visualModel.items.move(
                             drag.source.DelegateModel.itemsIndex,
                             dragArea.DelegateModel.itemsIndex)

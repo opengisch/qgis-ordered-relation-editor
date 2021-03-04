@@ -9,7 +9,7 @@
 # -----------------------------------------------------------
 
 from enum import Enum
-from qgis.PyQt.QtCore import Qt, QObject, QAbstractTableModel, QModelIndex
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QObject, QAbstractTableModel, QModelIndex
 from qgis.core import QgsRelation, QgsFeature, QgsExpression, QgsExpressionContext, QgsExpressionContextUtils, QgsMessageLog
 
 Debug = True
@@ -64,8 +64,8 @@ class OrderedRelationModel(QAbstractTableModel):
             context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
-            if Debug:
-                QgsMessageLog.logMessage(res)
+            #if Debug:
+            #     QgsMessageLog.logMessage(res)
             return res
 
         return None
@@ -75,6 +75,34 @@ class OrderedRelationModel(QAbstractTableModel):
             return False
 
         return False
+
+    @pyqtSlot(int, int)
+    def moveitems(self, index_from, index_to):
+        print(index_from, index_to)
+        if index_from == index_to:
+            return
+
+        field_index = self._relation.referencingLayer().fields().indexFromName(self._ordering_field)
+        if field_index < 0:
+            return
+
+        start_index = min(index_from, index_to)
+        end_index = max(index_from, index_to)
+        delta = 1 if index_from > index_to else -1
+
+        self.beginResetModel()
+
+        for i in range(start_index, end_index+1):
+            f = self._related_features[i]
+            if i == index_from:
+                f[self._ordering_field] = index_to + 1 # ranks are index +1 (start at 1)
+            else:
+                f[self._ordering_field] += delta
+
+            res = self._relation.referencingLayer().changeAttributeValue(f.id(), field_index, f[self._ordering_field])
+            print(res)
+
+        self.endResetModel()
 
     def roleNames(self):
         return {
