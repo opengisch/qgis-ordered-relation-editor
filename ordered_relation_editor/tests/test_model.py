@@ -48,14 +48,15 @@ class TestImport(unittest.TestCase):
     def tearDown(self):
         QgsProject.instance().removeAllMapLayers()
 
-    def features_in_order(self):
+    def test_move(self):
+        self.assertEqual(self.__features_in_order(), [i for i in range(1, 10)])
+        self.model.moveitems(2, 5)
+        self.assertEqual(self.__features_in_order(), [1, 2, 4, 5, 2, 6, 7, 8, 9])
+
+    def __features_in_order(self):
         features = []
         for i in range(1, 10):
             idx = self.model.index(i, 0, QModelIndex())
             features.append(self.model.data(idx, OrderedRelationModel.ImagePathRole))
         return features
 
-    def test_move(self):
-        self.assertEqual(self.features_in_order(), [i for i in range(1, 10)])
-        self.model.moveitems(2, 5)
-        self.assertEqual(self.features_in_order(), [1, 2, 4, 5, 2, 6, 7, 8, 9])
