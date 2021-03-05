@@ -11,20 +11,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-
-    - name: Build QGIS testing Docker Container
-      id: docker-build
-      uses: whoan/docker-build-with-cache-action@v5
-      with:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        registry: docker.pkg.github.com
-        image_name: qgis-test
-        dockerfile: .docker/test.Dockerfile
-        push_image_and_stages: true
-
     - name: Run tests
       run: |
-        docker run -v ${GITHUB_WORKSPACE}:/src -w /src ${DOCKER_IMAGE} pytest
+        docker run -v ${GITHUB_WORKSPACE}:/src -w /src opengisch/qgis:stable pytest
       env:
         DOCKER_IMAGE: ${{ steps.docker-build.outputs.FULL_IMAGE_NAME }}
