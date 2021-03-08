@@ -21,10 +21,10 @@ class TestModel(unittest.TestCase):
         self.referencing_layer = QgsVectorLayer("NoGeometry?field=id:integer&field=foreignkey:integer&field=rank:integer", "referencinglayer", "memory")
         pr = self.referencing_layer.dataProvider()
         features = []
-        for i in range(1, 10):
+        for i in range(0, 10):
             f = QgsFeature()
             f.setFields(self.referencing_layer.fields())
-            f.setAttributes([i, 1, i])
+            f.setAttributes([i+1, 1, i+1])
             features.append(f)
         assert pr.addFeatures(features)
 
@@ -51,17 +51,17 @@ class TestModel(unittest.TestCase):
         QgsProject.instance().removeAllMapLayers()
 
     def test_order(self):
-        self.assertEqual(self.__features_in_order(), [i for i in range(1, 10)])
+        self.assertEqual(self.__features_in_order(), [i+1 for i in range(0, 10)])
 
     def test_move(self):
-        self.assertEqual(self.__features_in_order(), [i for i in range(1, 10)])
+        self.assertEqual(self.__features_in_order(), [i+1 for i in range(0, 10)])
         self.model.moveitems(2, 5)
-        self.assertEqual(self.__features_in_order(), [1, 2, 4, 5, 2, 6, 7, 8, 9])
+        self.assertEqual(self.__features_in_order(), [1, 2, 4, 5, 6, 3, 7, 8, 9, 10])
 
     def __features_in_order(self):
         features = []
-        for i in range(1, 10):
-            idx = self.model.index(i, 0, QModelIndex())
+        for r in range(0, 10):
+            idx = self.model.index(r, 0, QModelIndex())
             features.append(self.model.data(idx, OrderedRelationModel.ImagePathRole))
         return features
 
