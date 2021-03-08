@@ -7,7 +7,7 @@ from ordered_relation_editor.core.ordered_relation_model import OrderedRelationM
 start_app()
 
 
-class TestImport(unittest.TestCase):
+class TestModel(unittest.TestCase):
 
     @classmethod
     def setUp(self):
@@ -27,26 +27,31 @@ class TestImport(unittest.TestCase):
             f.setAttributes([i, 1, i])
             features.append(f)
         assert pr.addFeatures(features)
+
+        QgsProject.instance().addMapLayers([self.referenced_layer, self.referencing_layer])
         
-        relation = QgsRelation()
-        relation.setId('rel1')
-        relation.setReferencingLayer(self.referencingLayer.id())
-        relation.setReferencedLayer(self.referencedLayer.id())
-        relation.addFieldPair('foreignkey', 'id')
+        self.relation = QgsRelation()
+        self.relation.setName('rel1')
+        self.relation.setId('rel1')
+        self.relation.setReferencingLayer(self.referencing_layer.id())
+        self.relation.setReferencedLayer(self.referenced_layer.id())
+        self.relation.addFieldPair('foreignkey', 'id')
 
-        assert relation.isValid()
+        assert self.relation.isValid()
 
-        QgsProject.instance().addMapLayers([self.referencedLayer, self.referencingLayer])
-        QgsProject.instance().relationManager().addRelation(relation)
+        QgsProject.instance().relationManager().addRelation(self.relation)
 
         req = QgsFeatureRequest(1)
         feature = next(self.referenced_layer.getFeatures(req))
 
         self.model = OrderedRelationModel()
-        self.model.init(relation, 'rank', feature, "\"id\"", "")
+        self.model.init(self.relation, 'rank', feature, "\"id\"", "")
 
     def tearDown(self):
         QgsProject.instance().removeAllMapLayers()
+
+    def test_order(self):
+        self.assertEqual(self.__features_in_order(), [i for i in range(1, 10)])
 
     def test_move(self):
         self.assertEqual(self.__features_in_order(), [i for i in range(1, 10)])

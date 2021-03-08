@@ -13,6 +13,6 @@ jobs:
 
     - name: Run tests
       run: |
-        docker run -v ${GITHUB_WORKSPACE}:/src -w /src opengisch/qgis:stable pytest-3
+        docker run -v ${GITHUB_WORKSPACE}:/src -w /src opengisch/qgis:stable xvfb-run pytest-3
       env:
         DOCKER_IMAGE: ${{ steps.docker-build.outputs.FULL_IMAGE_NAME }}
