@@ -13,7 +13,7 @@ import os
 from qgis.PyQt.QtCore import QUrl
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
-from qgis.core import QgsFeature
+from qgis.core import QgsFeature, QgsApplication
 from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm, QgsScrollArea
 from ordered_relation_editor.core.ordered_relation_model import OrderedRelationModel
 
@@ -25,6 +25,8 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
     def __init__(self, config, parent):
         super().__init__(config, parent)
         self.setupUi(self)
+        self.addFeatureToolButton.setIcon(QgsApplication.getThemeIcon('/mActionNewTableRow.svg'))
+        self.addFeatureToolButton.clicked.connect(self.addFeature)
         self.attribute_form = None
 
         print('__init__ OrderedRelationEditorWidget')
@@ -54,6 +56,22 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.image_path = config['image_path']
         self.description = config['description']
 
+    def beforeSetRelationFeature(self, new_relation, new_feature):
+        layer = self.relation().referencingLayer()
+        if layer:
+            layer.editingStarted.disconnect(self.update_buttons)
+            layer.editingStopped.disconnect(self.update_buttons)
+
+    def afterSetRelationFeature(self):
+        layer = self.relation().referencingLayer()
+        if layer:
+            layer.editingStarted.connect(self.update_buttons)
+            layer.editingStopped.connect(self.update_buttons)
+
+    def update_buttons(self):
+        enabled = self.relation().isValid() and self.relation().referencingLayer().isEditable()
+        self.addFeatureToolButton.setEnabled(enabled)
+
     def updateUi(self):
         # print('updateUi')
         self.model.init(self.relation(), self.ordering_field, self.feature(), self.image_path, self.description)
@@ -69,6 +87,8 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
             attribute_editor_scroll_area.setWidget(self.attribute_form)
         else:
             self.mAttributeFormView.layout().addWidget(self.attribute_form)
+
+        self.update_buttons()
 
     def parentFormValueChanged(self, attribute, newValue):
         if self.attribute_form:

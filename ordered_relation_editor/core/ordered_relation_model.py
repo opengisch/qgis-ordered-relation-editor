@@ -92,8 +92,8 @@ class OrderedRelationModel(QAbstractTableModel):
             context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
-            #if Debug:
-            #     QgsMessageLog.logMessage(res)
+            if Debug:
+                QgsMessageLog.logMessage(res)
             return res
 
         if role == self.DesriptionRole:
@@ -102,8 +102,8 @@ class OrderedRelationModel(QAbstractTableModel):
             context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
-            #if Debug:
-            #     QgsMessageLog.logMessage(res)
+            if Debug:
+                QgsMessageLog.logMessage(res)
             return res
 
         return None
@@ -158,6 +158,9 @@ class OrderedRelationModel(QAbstractTableModel):
     def reloadData(self):
         self.beginResetModel()
         self._related_features = []
+
+        if Debug:
+            print('Debug', self._ordering_field, self._relation.isValid(), self._relation.id(), self._feature.isValid())
 
         if len(self._ordering_field) > 0 and self._relation.isValid() and self._feature.isValid():
             request = self._relation.getRelatedFeaturesRequest(self._feature)
