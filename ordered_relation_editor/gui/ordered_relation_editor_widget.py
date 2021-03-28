@@ -61,6 +61,10 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         if layer:
             layer.editingStarted.disconnect(self.update_buttons)
             layer.editingStopped.disconnect(self.update_buttons)
+        if self.attribute_form:
+            if self.relation().isValid() and self.relation().referencingLayer().isEditable():
+                self.attribute_form.save()
+        self.view.rootObject().clearIndex()
 
     def afterSetRelationFeature(self):
         layer = self.relation().referencingLayer()
@@ -89,6 +93,8 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
             self.mAttributeFormView.layout().addWidget(self.attribute_form)
 
         self.update_buttons()
+        self.view.rootObject().clearIndex()
+
 
     def parentFormValueChanged(self, attribute, newValue):
         if self.attribute_form:

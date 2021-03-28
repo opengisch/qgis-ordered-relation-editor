@@ -93,7 +93,7 @@ class OrderedRelationModel(QAbstractTableModel):
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
             if Debug:
-                QgsMessageLog.logMessage(res)
+                QgsMessageLog.logMessage(str(res))
             return res
 
         if role == self.DesriptionRole:

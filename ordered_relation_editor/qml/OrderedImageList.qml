@@ -113,4 +113,8 @@ Rectangle {
         spacing: 4
         cacheBuffer: 50
     }
+
+    function clearIndex() {
+        listView.currentIndex = -1
+    }
 }
