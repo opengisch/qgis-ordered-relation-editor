@@ -41,7 +41,7 @@ Rectangle {
                else if (listView.currentIndex !== dragArea.DelegateModel.itemsIndex)
                {
                    listView.currentIndex = dragArea.DelegateModel.itemsIndex
-                   orderedModel.onViewCurrentIndexChanged(listView.currentIndex)
+                   orderedModel.onViewCurrentFeatureChanged(listView.currentIndex)
                }
             }
 
@@ -95,6 +95,7 @@ Rectangle {
             }
         }
     }
+
     DelegateModel {
         id: visualModel
 
@@ -116,5 +117,9 @@ Rectangle {
 
     function clearIndex() {
         listView.currentIndex = -1
+    }
+
+    function currentIndex() {
+        return listView.currentIndex
     }
 }

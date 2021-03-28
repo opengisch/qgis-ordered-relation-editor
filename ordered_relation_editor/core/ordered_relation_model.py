@@ -14,18 +14,11 @@ from qgis.core import QgsRelation, QgsFeature, QgsExpression, QgsExpressionConte
 
 Debug = True
 
-
-class Role(Enum):
-    RelationRole = Qt.UserRole + 1
-    RelationIdRole = Qt.UserRole + 2
-    AggregateRole = Qt.UserRole + 3
-    FieldRole = Qt.UserRole + 4
-
-
 class OrderedRelationModel(QAbstractTableModel):
 
     ImagePathRole = Qt.UserRole + 1
-    DesriptionRole = Qt.UserRole + 2
+    DescriptionRole = Qt.UserRole + 2
+    FeatureIdRole = Qt.UserRole + 5
 
     layerEditingEnabledChanged = pyqtSignal()
     currentFeatureChanged = pyqtSignal(QgsFeature)
@@ -96,7 +89,7 @@ class OrderedRelationModel(QAbstractTableModel):
                 QgsMessageLog.logMessage(str(res))
             return res
 
-        if role == self.DesriptionRole:
+        elif role == self.DescriptionRole:
             exp = QgsExpression(self._description)
             context = QgsExpressionContext()
             context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
@@ -105,6 +98,9 @@ class OrderedRelationModel(QAbstractTableModel):
             if Debug:
                 QgsMessageLog.logMessage(res)
             return res
+
+        elif role == self.FeatureIdRole:
+            return self._related_features[index.row()].id()
 
         return None
 
@@ -144,15 +140,15 @@ class OrderedRelationModel(QAbstractTableModel):
 
         self.endResetModel()
 
-
     @pyqtSlot(int)
-    def onViewCurrentIndexChanged(self, index):
+    def onViewCurrentFeatureChanged(self, index):
         self.currentFeatureChanged.emit(self._related_features[index])
 
     def roleNames(self):
         return {
             self.ImagePathRole: b'ImagePath',
-            self.DesriptionRole: b'Description'
+            self.DescriptionRole: b'Description',
+            self.FeatureIdRole: b'FeatureId'
         }
 
     def reloadData(self):

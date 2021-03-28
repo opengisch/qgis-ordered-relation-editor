@@ -10,7 +10,7 @@
 
 from PyQt5.QtQuickWidgets import QQuickWidget
 import os
-from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtCore import QUrl, QModelIndex
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
 from qgis.core import QgsFeature, QgsApplication
@@ -19,6 +19,7 @@ from ordered_relation_editor.core.ordered_relation_model import OrderedRelationM
 
 WidgetUi, _ = loadUiType(os.path.join(os.path.dirname(__file__), '../ui/ordered_relation_editor_widget.ui'))
 
+Debug = True
 
 class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
@@ -27,6 +28,8 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.setupUi(self)
         self.addFeatureToolButton.setIcon(QgsApplication.getThemeIcon('/mActionNewTableRow.svg'))
         self.addFeatureToolButton.clicked.connect(self.addFeature)
+        self.deleteFeatureToolButton.setIcon(QgsApplication.getThemeIcon('/mActionDeleteSelected.svg'))
+        self.deleteFeatureToolButton.clicked.connect(self.deleteSelectedFeature)
         self.attribute_form = None
 
         print('__init__ OrderedRelationEditorWidget')
@@ -47,9 +50,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         layout.addWidget(self.view)
 
     def config(self):
-        return {
-
-        }
+        return {}
 
     def setConfig(self, config):
         self.ordering_field = config['ordering_field']
@@ -74,7 +75,9 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
     def update_buttons(self):
         enabled = self.relation().isValid() and self.relation().referencingLayer().isEditable()
+        view_has_selection = self.view.rootObject().currentIndex() >= 0
         self.addFeatureToolButton.setEnabled(enabled)
+        self.deleteFeatureToolButton.setEnabled(enabled and view_has_selection)
 
     def updateUi(self):
         # print('updateUi')
@@ -95,7 +98,6 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.update_buttons()
         self.view.rootObject().clearIndex()
 
-
     def parentFormValueChanged(self, attribute, newValue):
         if self.attribute_form:
             self.attribute_form.parentFormValueChanged(attribute, newValue)
@@ -107,5 +109,16 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
                     self.model.reloadData()
 
             self.attribute_form.setFeature(feature)
+        self.update_buttons()
+
+    def deleteSelectedFeature(self):
+        index = self.view.rootObject().currentIndex()
+        if Debug:
+            print('index', index)
+        if index >= 0:
+            feature_id = self.model.data(self.model.index(index, 0), OrderedRelationModel.FeatureIdRole)
+            if Debug:
+                print('fid', feature_id)
+            self.deleteFeatures([feature_id])
 
 
