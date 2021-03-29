@@ -10,9 +10,9 @@ email=denis@opengis.ch
 # Tags are comma separated with spaces allowed
 tags=relation
 
-tracker=https://github.com/opengisch/qgis-ordered-relation-editor-plugin/issues
-homepage=https://github.com/opengisch/qgis-ordered-relation-editor-plugin
-repository=https://github.com/opengisch/qgis-ordered-relation-editor-plugin
+tracker=https://github.com/opengisch/qgis-ordered-relation-editor/issues
+homepage=https://github.com/opengisch/qgis-ordered-relation-editor
+repository=https://github.com/opengisch/qgis-ordered-relation-editor
 
 category=Vector
 
