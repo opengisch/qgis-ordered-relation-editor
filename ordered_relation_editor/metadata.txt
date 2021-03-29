@@ -1,6 +1,6 @@
 [general]
 name=Ordered Relation Editor
-qgisMinimumVersion=3.17
+qgisMinimumVersion=3.18
 description=Provides a relation editor widget to handle ordered relations
 about=Provides a relation editor widget to handle ordered relations
 version=dev
