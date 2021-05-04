@@ -96,7 +96,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
             self.mAttributeFormView.layout().addWidget(self.attribute_form)
 
         self.update_buttons()
-        self.view.rootObject().clearIndex()
+        self.view.rootObject().setCurrentIndex(0)
 
     def parentFormValueChanged(self, attribute, newValue):
         if self.attribute_form:

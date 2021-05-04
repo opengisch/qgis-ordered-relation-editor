@@ -78,8 +78,8 @@ Rectangle {
                 Row {
                     id: row
                     anchors { fill: parent; margins: 2 }
-                    Image { source: ImagePath; width: 50; fillMode: Image.PreserveAspectFit }
-                    Text { text: Description }
+                    Image { source: ImagePath; width: 50; fillMode: Image.PreserveAspectFit; visible: ImagePath !== "" }
+                    Text { text: Description; height: 40; verticalAlignment: Text.AlignVCenter; padding: 4 }
                 }
             }
             DropArea {
@@ -121,5 +121,10 @@ Rectangle {
 
     function currentIndex() {
         return listView.currentIndex
+    }
+
+    function setCurrentIndex(i){
+      listView.currentIndex = i
+      orderedModel.onViewCurrentFeatureChanged(listView.currentIndex)
     }
 }
