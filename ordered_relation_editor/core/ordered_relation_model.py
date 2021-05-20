@@ -142,7 +142,8 @@ class OrderedRelationModel(QAbstractTableModel):
 
     @pyqtSlot(int)
     def onViewCurrentFeatureChanged(self, index):
-        self.currentFeatureChanged.emit(self._related_features[index])
+        if index >= 0 and index < len(self._related_features):
+            self.currentFeatureChanged.emit(self._related_features[index])
 
     def roleNames(self):
         return {
