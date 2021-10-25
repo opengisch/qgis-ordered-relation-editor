@@ -20,7 +20,7 @@ Rectangle {
             property int indexFrom: -1
             property int indexTo: -1
 
-            anchors { left: parent.left; right: parent.right }
+            width: listView.width
             height: content.height
 
             drag.target: held ? content : undefined
