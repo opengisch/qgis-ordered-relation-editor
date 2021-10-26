@@ -86,7 +86,7 @@ class OrderedRelationModel(QAbstractTableModel):
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
             if res is None:
-              res = str()
+                res = str()
             if Debug:
                 QgsMessageLog.logMessage("ImagePath role: '{0}'".format(str(res)))
             return res
