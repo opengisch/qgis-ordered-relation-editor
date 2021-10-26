@@ -85,8 +85,10 @@ class OrderedRelationModel(QAbstractTableModel):
             context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
+            if res is None:
+                res = str()
             if Debug:
-                QgsMessageLog.logMessage(str(res))
+                QgsMessageLog.logMessage("ImagePath role: '{0}'".format(str(res)))
             return res
 
         elif role == self.DescriptionRole:
@@ -95,8 +97,10 @@ class OrderedRelationModel(QAbstractTableModel):
             context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
+            if res is None:
+                res = str()
             if Debug:
-                QgsMessageLog.logMessage(res)
+                QgsMessageLog.logMessage("Description role: '{0}'".format(str(res)))
             return res
 
         elif role == self.FeatureIdRole:
