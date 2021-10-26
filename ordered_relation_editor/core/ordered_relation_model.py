@@ -161,7 +161,8 @@ class OrderedRelationModel(QAbstractTableModel):
         self._related_features = []
 
         if Debug:
-            print('Debug', self._ordering_field, self._relation.isValid(), self._relation.id(), self._feature.isValid())
+            QgsMessageLog.logMessage("Reload data: Ordering field='{0}', Relation valid/id={1}/'{2}', Feature valid={3}"
+                                      .format(self._ordering_field, self._relation.isValid(), self._relation.id(), self._feature.isValid()))
 
         if len(self._ordering_field) > 0 and self._relation.isValid() and self._feature.isValid():
             request = self._relation.getRelatedFeaturesRequest(self._feature)

@@ -10,10 +10,10 @@
 
 from PyQt5.QtQuickWidgets import QQuickWidget
 import os
-from qgis.PyQt.QtCore import QUrl, QModelIndex
+from qgis.PyQt.QtCore import QUrl, QModelIndex, QTimer
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
-from qgis.core import QgsFeature, QgsApplication
+from qgis.core import QgsFeature, QgsApplication, QgsMessageLog
 from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm, QgsScrollArea
 from ordered_relation_editor.core.ordered_relation_model import OrderedRelationModel
 
@@ -25,6 +25,9 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
     def __init__(self, config, parent):
         super().__init__(config, parent)
+        self.updateUiTimer = QTimer()
+        self.updateUiTimer.setSingleShot(True)
+        self.updateUiTimer.timeout.connect(self.updateUiTimeout)
         self.setupUi(self)
         self.addFeatureToolButton.setIcon(QgsApplication.getThemeIcon('/mActionNewTableRow.svg'))
         self.addFeatureToolButton.clicked.connect(self.addFeature)
@@ -80,7 +83,12 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.deleteFeatureToolButton.setEnabled(enabled and view_has_selection)
 
     def updateUi(self):
-        # print('updateUi')
+        self.updateUiTimer.start(200)
+
+    def updateUiTimeout(self):
+        if Debug:
+            QgsMessageLog.logMessage("updateUiTimeout()")
+
         self.model.init(self.relation(), self.ordering_field, self.feature(), self.image_path, self.description)
 
         # form view
