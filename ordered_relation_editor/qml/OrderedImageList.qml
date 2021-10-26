@@ -78,8 +78,21 @@ Rectangle {
                 Row {
                     id: row
                     anchors { fill: parent; margins: 2 }
-                    Image { source: ImagePath; width: 50; fillMode: Image.PreserveAspectFit; visible: ImagePath !== "" }
-                    Text { text: Description; height: 40; verticalAlignment: Text.AlignVCenter; padding: 4 }
+                    Image {
+                        id: imageContent
+                        source: ImagePath
+                        width: 50
+                        fillMode: Image.PreserveAspectFit
+                        visible: ImagePath !== ""
+                    }
+                    Text {
+                        id: textContent
+                        text: Description
+                        width: parent.width-imageContent.width
+                        verticalAlignment: Text.AlignVCenter
+                        padding: 4
+                        wrapMode: Text.Wrap
+                    }
                 }
             }
             DropArea {
