@@ -47,6 +47,8 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         # QML display of images
         layout = QVBoxLayout()
         self.mListView.setLayout(layout)
+        self.mListView.setMinimumHeight(200)
+        self.mListView.setMaximumWidth(300)
         self.view = QQuickWidget(self.mListView)
         self.view.rootContext().setContextProperty("orderedModel", self.model)
         self.view.setSource(QUrl.fromLocalFile(os.path.join(os.path.dirname(__file__), '../qml/OrderedImageList.qml')))
@@ -92,32 +94,37 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
         self.model.init(self.relation(), self.ordering_field, self.feature(), self.image_path, self.description)
 
-        # form view
+        # we defer attribute form creation on the first valid feature passed on
         if self.attribute_form:
             self.attribute_form.deleteLater()
-        self.attribute_form = QgsAttributeForm(self.relation().referencingLayer(), QgsFeature(), self.editorContext())
-        if not self.editorContext().parentContext():
-            attribute_editor_scroll_area = QgsScrollArea()
-            attribute_editor_scroll_area.setWidgetResizable(True)
-            self.mAttributeFormView.layout().addWidget(attribute_editor_scroll_area)
-            attribute_editor_scroll_area.setWidget(self.attribute_form)
-        else:
-            self.mAttributeFormView.layout().addWidget(self.attribute_form)
 
         self.update_buttons()
-        self.view.rootObject().setCurrentIndex(0)
+        self.view.rootObject().setCurrentIndex(-1)
 
     def parentFormValueChanged(self, attribute, newValue):
         if self.attribute_form:
             self.attribute_form.parentFormValueChanged(attribute, newValue)
 
     def onCurrentFeatureChanged(self, feature):
-        if self.attribute_form:
+        if not self.attribute_form and feature.isValid():
+            self.attribute_form = QgsAttributeForm(self.relation().referencingLayer(), feature, self.editorContext())
+            if not self.editorContext().parentContext():
+                attribute_editor_scroll_area = QgsScrollArea()
+                attribute_editor_scroll_area.setWidgetResizable(True)
+                self.mAttributeFormView.layout().addWidget(attribute_editor_scroll_area)
+                attribute_editor_scroll_area.setWidget(self.attribute_form)
+            else:
+                self.mAttributeFormView.layout().addWidget(self.attribute_form)
+        else:
             if self.relation().referencingLayer().isEditable():
                 if self.attribute_form.save():
                     self.model.reloadData()
 
-            self.attribute_form.setFeature(feature)
+            if feature.isValid():
+                self.attribute_form.setFeature(feature)
+            else:
+                self.attribute_form.deleteLater()
+
         self.update_buttons()
 
     def deleteSelectedFeature(self):
