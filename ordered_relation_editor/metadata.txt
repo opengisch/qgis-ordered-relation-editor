@@ -5,7 +5,7 @@ description=Provides a relation editor widget to handle ordered relations
 about=Provides a relation editor widget to handle ordered relations
 version=dev
 author=OPENGIS.ch
-email=denis@opengis.ch
+email=info@opengis.ch
 
 # Tags are comma separated with spaces allowed
 tags=relation
