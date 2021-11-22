@@ -4,7 +4,7 @@ qgisMinimumVersion=3.18
 description=Provides a relation editor widget to handle ordered relations
 about=Provides a relation editor widget to handle ordered relations
 version=dev
-author=Denis Rouzaud
+author=OPENGIS.ch
 email=denis@opengis.ch
 
 # Tags are comma separated with spaces allowed
