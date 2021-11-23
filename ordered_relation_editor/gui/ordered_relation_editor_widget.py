@@ -105,7 +105,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         if self.attribute_form:
             self.attribute_form.parentFormValueChanged(attribute, newValue)
 
-    def onCurrentFeatureChanged(self, feature):
+    def onCurrentFeatureChanged(self, feature = QgsFeature()):
         if not self.attribute_form and feature.isValid():
             self.attribute_form = QgsAttributeForm(self.relation().referencingLayer(), feature, self.editorContext())
             if not self.editorContext().parentContext():
@@ -115,7 +115,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
                 attribute_editor_scroll_area.setWidget(self.attribute_form)
             else:
                 self.mAttributeFormView.layout().addWidget(self.attribute_form)
-        else:
+        elif self.attribute_form:
             if self.relation().referencingLayer().isEditable():
                 if self.attribute_form.save():
                     self.model.reloadData()
@@ -124,6 +124,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
                 self.attribute_form.setFeature(feature)
             else:
                 self.attribute_form.deleteLater()
+                self.attribute_form = None
 
         self.update_buttons()
 
