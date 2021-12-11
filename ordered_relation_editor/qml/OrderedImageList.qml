@@ -13,7 +13,7 @@ Rectangle {
 
         MouseArea {
             id: dragArea
-            pressAndHoldInterval: 130
+            pressAndHoldInterval: 250
 
             property bool held: false
 
