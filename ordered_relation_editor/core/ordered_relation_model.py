@@ -40,6 +40,9 @@ class OrderedRelationModel(QAbstractTableModel):
         self._feature = feature
         self.reloadData()
 
+        # emit a currentFeatureChanged signal with an invalid feature to reset the widget
+        self.currentFeatureChanged.emit(QgsFeature())
+
         self._relation.referencingLayer().editingStarted.connect(self.editingStarted)
         self._relation.referencingLayer().editingStopped.connect(self.editingStopped)
 
@@ -172,8 +175,6 @@ class OrderedRelationModel(QAbstractTableModel):
             self._related_features = sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
 
         self.endResetModel()
-        # emit a currentFeatureChanged signal with an invalid feature to reset the widget
-        self.currentFeatureChanged.emit(QgsFeature())
 
 
 
