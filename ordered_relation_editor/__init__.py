@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # -----------------------------------------------------------
 #
 # QGIS Ordered Relation Editor Plugin
@@ -15,5 +14,8 @@ def classFactory(iface):
     :type iface: QgsInterface
     """
     #
-    from ordered_relation_editor.core.ordered_relation_editor_plugin import OrderedRelationEditorPlugin
+    from ordered_relation_editor.core.ordered_relation_editor_plugin import (
+        OrderedRelationEditorPlugin,
+    )
+
     return OrderedRelationEditorPlugin(iface)

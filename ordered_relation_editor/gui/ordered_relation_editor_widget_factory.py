@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # -----------------------------------------------------------
 #
 # QGIS Ordered Relation Editor Plugin
@@ -8,10 +7,15 @@
 #
 # -----------------------------------------------------------
 
-from qgis.PyQt.QtCore import QObject
 from qgis.gui import QgsAbstractRelationEditorWidgetFactory
-from ordered_relation_editor.gui.ordered_relation_editor_widget import OrderedRelationEditorWidget
-from ordered_relation_editor.gui.ordered_relation_editor_config_widget import OrderedRelationEditorConfigWidget
+from qgis.PyQt.QtCore import QObject
+
+from ordered_relation_editor.gui.ordered_relation_editor_config_widget import (
+    OrderedRelationEditorConfigWidget,
+)
+from ordered_relation_editor.gui.ordered_relation_editor_widget import (
+    OrderedRelationEditorWidget,
+)
 
 WIDGET_TYPE = "ordered_relation_editor"
 

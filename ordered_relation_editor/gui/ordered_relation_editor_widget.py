@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # -----------------------------------------------------------
 #
 # QGIS Ordered Relation Editor Plugin
@@ -8,38 +7,46 @@
 #
 # -----------------------------------------------------------
 
-from PyQt5.QtQuickWidgets import QQuickWidget
 import os
-from qgis.PyQt.QtCore import QUrl, QModelIndex, QTimer
+
+from PyQt5.QtQuickWidgets import QQuickWidget
+from qgis.core import QgsApplication, QgsFeature, QgsMessageLog
+from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm, QgsScrollArea
+from qgis.PyQt.QtCore import QModelIndex, QTimer, QUrl
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
-from qgis.core import QgsFeature, QgsApplication, QgsMessageLog
-from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm, QgsScrollArea
+
 from ordered_relation_editor.core.ordered_relation_model import OrderedRelationModel
 
-WidgetUi, _ = loadUiType(os.path.join(os.path.dirname(__file__), '../ui/ordered_relation_editor_widget.ui'))
+WidgetUi, _ = loadUiType(
+    os.path.join(os.path.dirname(__file__), "../ui/ordered_relation_editor_widget.ui")
+)
 
 Debug = True
 
-class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
+class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
     def __init__(self, config, parent):
         super().__init__(config, parent)
         self.updateUiTimer = QTimer()
         self.updateUiTimer.setSingleShot(True)
         self.updateUiTimer.timeout.connect(self.updateUiTimeout)
         self.setupUi(self)
-        self.addFeatureToolButton.setIcon(QgsApplication.getThemeIcon('/mActionNewTableRow.svg'))
+        self.addFeatureToolButton.setIcon(
+            QgsApplication.getThemeIcon("/mActionNewTableRow.svg")
+        )
         self.addFeatureToolButton.clicked.connect(self.addFeature)
-        self.deleteFeatureToolButton.setIcon(QgsApplication.getThemeIcon('/mActionDeleteSelected.svg'))
+        self.deleteFeatureToolButton.setIcon(
+            QgsApplication.getThemeIcon("/mActionDeleteSelected.svg")
+        )
         self.deleteFeatureToolButton.clicked.connect(self.deleteSelectedFeature)
         self.attribute_form = None
 
-        print('__init__ OrderedRelationEditorWidget')
+        print("__init__ OrderedRelationEditorWidget")
 
-        self.ordering_field = str()
-        self.image_path = str()
-        self.description = str()
+        self.ordering_field = ""
+        self.image_path = ""
+        self.description = ""
 
         self.model = OrderedRelationModel()
         self.model.currentFeatureChanged.connect(self.onCurrentFeatureChanged)
@@ -52,7 +59,11 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         self.mListView.setMaximumWidth(300)
         self.view = QQuickWidget(self.mListView)
         self.view.rootContext().setContextProperty("orderedModel", self.model)
-        self.view.setSource(QUrl.fromLocalFile(os.path.join(os.path.dirname(__file__), '../qml/OrderedImageList.qml')))
+        self.view.setSource(
+            QUrl.fromLocalFile(
+                os.path.join(os.path.dirname(__file__), "../qml/OrderedImageList.qml")
+            )
+        )
         self.view.setResizeMode(QQuickWidget.SizeRootObjectToView)
         layout.addWidget(self.view)
 
@@ -60,9 +71,9 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         return {}
 
     def setConfig(self, config):
-        self.ordering_field = config['ordering_field']
-        self.image_path = config['image_path']
-        self.description = config['description']
+        self.ordering_field = config["ordering_field"]
+        self.image_path = config["image_path"]
+        self.description = config["description"]
 
     def beforeSetRelationFeature(self, new_relation, new_feature):
         layer = self.relation().referencingLayer()
@@ -70,7 +81,10 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
             layer.editingStarted.disconnect(self.update_buttons)
             layer.editingStopped.disconnect(self.update_buttons)
         if self.attribute_form:
-            if self.relation().isValid() and self.relation().referencingLayer().isEditable():
+            if (
+                self.relation().isValid()
+                and self.relation().referencingLayer().isEditable()
+            ):
                 self.attribute_form.save()
         self.view.rootObject().clearIndex()
 
@@ -81,7 +95,10 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
             layer.editingStopped.connect(self.update_buttons)
 
     def update_buttons(self):
-        enabled = self.relation().isValid() and self.relation().referencingLayer().isEditable()
+        enabled = (
+            self.relation().isValid()
+            and self.relation().referencingLayer().isEditable()
+        )
         view_has_selection = self.view.rootObject().currentIndex() >= 0
         self.addFeatureToolButton.setEnabled(enabled)
         self.deleteFeatureToolButton.setEnabled(enabled and view_has_selection)
@@ -93,7 +110,13 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         if Debug:
             QgsMessageLog.logMessage("updateUiTimeout()")
 
-        self.model.init(self.relation(), self.ordering_field, self.feature(), self.image_path, self.description)
+        self.model.init(
+            self.relation(),
+            self.ordering_field,
+            self.feature(),
+            self.image_path,
+            self.description,
+        )
 
         # we defer attribute form creation on the first valid feature passed on
         if self.attribute_form:
@@ -106,9 +129,11 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
         if self.attribute_form:
             self.attribute_form.parentFormValueChanged(attribute, newValue)
 
-    def onCurrentFeatureChanged(self, feature = QgsFeature()):
+    def onCurrentFeatureChanged(self, feature=QgsFeature()):
         if not self.attribute_form and feature.isValid():
-            self.attribute_form = QgsAttributeForm(self.relation().referencingLayer(), feature, self.editorContext())
+            self.attribute_form = QgsAttributeForm(
+                self.relation().referencingLayer(), feature, self.editorContext()
+            )
             if not self.editorContext().parentContext():
                 attribute_editor_scroll_area = QgsScrollArea()
                 attribute_editor_scroll_area.setWidgetResizable(True)
@@ -132,11 +157,11 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
     def deleteSelectedFeature(self):
         index = self.view.rootObject().currentIndex()
         if Debug:
-            print('index', index)
+            print("index", index)
         if index >= 0:
-            feature_id = self.model.data(self.model.index(index, 0), OrderedRelationModel.FeatureIdRole)
+            feature_id = self.model.data(
+                self.model.index(index, 0), OrderedRelationModel.FeatureIdRole
+            )
             if Debug:
-                print('fid', feature_id)
+                print("fid", feature_id)
             self.deleteFeatures([feature_id])
-
-

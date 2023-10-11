@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # -----------------------------------------------------------
 #
 # QGIS Ordered Relation Editor Plugin
@@ -9,13 +8,29 @@
 # -----------------------------------------------------------
 
 from enum import Enum
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, pyqtProperty, Qt, QObject, QAbstractTableModel, QModelIndex
-from qgis.core import QgsRelation, QgsFeature, QgsExpression, QgsExpressionContext, QgsExpressionContextUtils, QgsMessageLog
+
+from qgis.core import (
+    QgsExpression,
+    QgsExpressionContext,
+    QgsExpressionContextUtils,
+    QgsFeature,
+    QgsMessageLog,
+    QgsRelation,
+)
+from qgis.PyQt.QtCore import (
+    QAbstractTableModel,
+    QModelIndex,
+    QObject,
+    Qt,
+    pyqtProperty,
+    pyqtSignal,
+    pyqtSlot,
+)
 
 Debug = True
 
-class OrderedRelationModel(QAbstractTableModel):
 
+class OrderedRelationModel(QAbstractTableModel):
     ImagePathRole = Qt.UserRole + 1
     DescriptionRole = Qt.UserRole + 2
     FeatureIdRole = Qt.UserRole + 5
@@ -24,15 +39,22 @@ class OrderedRelationModel(QAbstractTableModel):
     currentFeatureChanged = pyqtSignal(QgsFeature)
 
     def __init__(self, parent: QObject = None):
-        super(OrderedRelationModel, self).__init__(parent)
+        super().__init__(parent)
         self._relation = QgsRelation()
-        self._ordering_field = str()
-        self._image_path = str()
-        self._description = str()
+        self._ordering_field = ""
+        self._image_path = ""
+        self._description = ""
         self._feature = QgsFeature()
         self._related_features = []
 
-    def init(self, relation: QgsRelation, ordering_field: str, feature: QgsFeature, image_path: str, description: str):
+    def init(
+        self,
+        relation: QgsRelation,
+        ordering_field: str,
+        feature: QgsFeature,
+        image_path: str,
+        description: str,
+    ):
         self._relation = relation
         self._ordering_field = ordering_field
         self._image_path = image_path
@@ -85,25 +107,33 @@ class OrderedRelationModel(QAbstractTableModel):
         if role == self.ImagePathRole:
             exp = QgsExpression(self._image_path)
             context = QgsExpressionContext()
-            context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
+            context.appendScopes(
+                QgsExpressionContextUtils.globalProjectLayerScopes(
+                    self._relation.referencingLayer()
+                )
+            )
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
             if res is None:
-                res = str()
+                res = ""
             if Debug:
-                QgsMessageLog.logMessage("ImagePath role: '{0}'".format(str(res)))
+                QgsMessageLog.logMessage(f"ImagePath role: '{str(res)}'")
             return res
 
         elif role == self.DescriptionRole:
             exp = QgsExpression(self._description)
             context = QgsExpressionContext()
-            context.appendScopes(QgsExpressionContextUtils.globalProjectLayerScopes(self._relation.referencingLayer()))
+            context.appendScopes(
+                QgsExpressionContextUtils.globalProjectLayerScopes(
+                    self._relation.referencingLayer()
+                )
+            )
             context.setFeature(self._related_features[index.row()])
             res = exp.evaluate(context)
             if res is None:
-                res = str()
+                res = ""
             if Debug:
-                QgsMessageLog.logMessage("Description role: '{0}'".format(str(res)))
+                QgsMessageLog.logMessage(f"Description role: '{str(res)}'")
             return res
 
         elif role == self.FeatureIdRole:
@@ -123,7 +153,11 @@ class OrderedRelationModel(QAbstractTableModel):
         if index_from == index_to:
             return
 
-        field_index = self._relation.referencingLayer().fields().indexFromName(self._ordering_field)
+        field_index = (
+            self._relation.referencingLayer()
+            .fields()
+            .indexFromName(self._ordering_field)
+        )
         if field_index < 0:
             return
 
@@ -133,17 +167,23 @@ class OrderedRelationModel(QAbstractTableModel):
 
         self.beginResetModel()
 
-        for i in range(start_index, end_index+1):
+        for i in range(start_index, end_index + 1):
             f = self._related_features[i]
             if i == index_from:
-                self._related_features[i][self._ordering_field] = index_to + 1  # ranks are index +1 (start at 1)
+                self._related_features[i][self._ordering_field] = (
+                    index_to + 1
+                )  # ranks are index +1 (start at 1)
             else:
                 self._related_features[i][self._ordering_field] += delta
 
-            res = self._relation.referencingLayer().changeAttributeValue(f.id(), field_index, f[self._ordering_field])
+            res = self._relation.referencingLayer().changeAttributeValue(
+                f.id(), field_index, f[self._ordering_field]
+            )
             print(res)
 
-        self._related_features = sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
+        self._related_features = sorted(
+            self._related_features, key=lambda _f: _f[self._ordering_field]
+        )
 
         self.endResetModel()
 
@@ -154,9 +194,9 @@ class OrderedRelationModel(QAbstractTableModel):
 
     def roleNames(self):
         return {
-            self.ImagePathRole: b'ImagePath',
-            self.DescriptionRole: b'Description',
-            self.FeatureIdRole: b'FeatureId'
+            self.ImagePathRole: b"ImagePath",
+            self.DescriptionRole: b"Description",
+            self.FeatureIdRole: b"FeatureId",
         }
 
     def reloadData(self):
@@ -164,18 +204,26 @@ class OrderedRelationModel(QAbstractTableModel):
         self._related_features = []
 
         if Debug:
-            QgsMessageLog.logMessage("Reload data: Ordering field='{0}', Relation valid/id={1}/'{2}', Feature valid={3}"
-                                      .format(self._ordering_field, self._relation.isValid(), self._relation.id(), self._feature.isValid()))
+            QgsMessageLog.logMessage(
+                "Reload data: Ordering field='{}', Relation valid/id={}/'{}', Feature valid={}".format(
+                    self._ordering_field,
+                    self._relation.isValid(),
+                    self._relation.id(),
+                    self._feature.isValid(),
+                )
+            )
 
-        if len(self._ordering_field) > 0 and self._relation.isValid() and self._feature.isValid():
+        if (
+            len(self._ordering_field) > 0
+            and self._relation.isValid()
+            and self._feature.isValid()
+        ):
             request = self._relation.getRelatedFeaturesRequest(self._feature)
             for f in self._relation.referencingLayer().getFeatures(request):
                 self._related_features.append(f)
 
-            self._related_features = sorted(self._related_features, key=lambda _f: _f[self._ordering_field])
+            self._related_features = sorted(
+                self._related_features, key=lambda _f: _f[self._ordering_field]
+            )
 
         self.endResetModel()
-
-
-
-

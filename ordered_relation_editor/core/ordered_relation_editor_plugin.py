@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # -----------------------------------------------------------
 #
 # QGIS Ordered Relation Editor Plugin
@@ -9,15 +8,19 @@
 # -----------------------------------------------------------
 
 import os
-from qgis.PyQt.QtCore import QCoreApplication, QTranslator, QObject, QLocale, QSettings
+
 from qgis.gui import QgisInterface, QgsGui
-from ordered_relation_editor.gui.ordered_relation_editor_widget_factory import OrderedRelationEditorWidgetFactory, WIDGET_TYPE
+from qgis.PyQt.QtCore import QCoreApplication, QLocale, QObject, QSettings, QTranslator
+
+from ordered_relation_editor.gui.ordered_relation_editor_widget_factory import (
+    WIDGET_TYPE,
+    OrderedRelationEditorWidgetFactory,
+)
 
 DEBUG = True
 
 
 class OrderedRelationEditorPlugin(QObject):
-
     plugin_name = "&Ordered Relation Editor"
 
     def __init__(self, iface: QgisInterface):
@@ -25,15 +28,16 @@ class OrderedRelationEditorPlugin(QObject):
         self.iface = iface
 
         # initialize translation
-        qgis_locale = QLocale(QSettings().value('locale/userLocale'))
-        locale_path = os.path.join(os.path.dirname(__file__), 'i18n')
+        qgis_locale = QLocale(QSettings().value("locale/userLocale"))
+        locale_path = os.path.join(os.path.dirname(__file__), "i18n")
         self.translator = QTranslator()
-        self.translator.load(qgis_locale, 'actions_for_relations', '_', locale_path)
+        self.translator.load(qgis_locale, "actions_for_relations", "_", locale_path)
         QCoreApplication.installTranslator(self.translator)
 
     def initGui(self):
-        QgsGui.relationWidgetRegistry().addRelationWidget(OrderedRelationEditorWidgetFactory())
+        QgsGui.relationWidgetRegistry().addRelationWidget(
+            OrderedRelationEditorWidgetFactory()
+        )
 
     def unload(self):
         QgsGui.relationWidgetRegistry().removeRelationWidget(WIDGET_TYPE)
-
