@@ -46,6 +46,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
 
         # QML display of images
         layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
         self.mListView.setLayout(layout)
         self.mListView.setMinimumHeight(200)
         self.mListView.setMaximumWidth(300)
