@@ -31,9 +31,9 @@ Debug = True
 
 
 class OrderedRelationModel(QAbstractTableModel):
-    ImagePathRole = Qt.UserRole + 1
-    DescriptionRole = Qt.UserRole + 2
-    FeatureIdRole = Qt.UserRole + 5
+    ImagePathRole = Qt.ItemDataRole.UserRole + 1
+    DescriptionRole = Qt.ItemDataRole.UserRole + 2
+    FeatureIdRole = Qt.ItemDataRole.UserRole + 5
 
     layerEditingEnabledChanged = pyqtSignal()
     currentFeatureChanged = pyqtSignal(QgsFeature)
@@ -97,7 +97,11 @@ class OrderedRelationModel(QAbstractTableModel):
         return None
 
     def flags(self, index: QModelIndex) -> Qt.ItemFlags:
-        flags = Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+        flags = (
+            Qt.ItemFlag.ItemIsEnabled
+            | Qt.ItemFlag.ItemIsSelectable
+            | Qt.ItemFlag.ItemIsEditable
+        )
         return flags
 
     def data(self, index: QModelIndex, role: int = ...):
@@ -141,7 +145,9 @@ class OrderedRelationModel(QAbstractTableModel):
 
         return None
 
-    def setData(self, index: QModelIndex, value, role: int = Qt.EditRole) -> bool:
+    def setData(
+        self, index: QModelIndex, value, role: int = Qt.ItemDataRole.EditRole
+    ) -> bool:
         if index.row() < 0 or index.row() >= self.rowCount(QModelIndex()):
             return False
 
