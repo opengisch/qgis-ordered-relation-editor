@@ -9,10 +9,10 @@
 
 import os
 
-from PyQt5.QtQuickWidgets import QQuickWidget
 from qgis.core import QgsApplication, QgsFeature, QgsMessageLog
 from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm, QgsScrollArea
 from qgis.PyQt.QtCore import QModelIndex, QTimer, QUrl
+from qgis.PyQt.QtQuickWidgets import QQuickWidget
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
 

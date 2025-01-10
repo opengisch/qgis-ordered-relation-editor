@@ -1,4 +1,3 @@
-from PyQt5.QtCore import QModelIndex
 from qgis.core import (
     QgsFeature,
     QgsFeatureRequest,
@@ -6,6 +5,7 @@ from qgis.core import (
     QgsRelation,
     QgsVectorLayer,
 )
+from qgis.PyQt.QtCore import QModelIndex
 from qgis.testing import start_app, unittest
 
 from ordered_relation_editor.core.ordered_relation_model import OrderedRelationModel
