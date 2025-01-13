@@ -69,7 +69,7 @@ class OrderedRelationEditorWidget(QgsAbstractRelationEditorWidget, WidgetUi):
                 os.path.join(os.path.dirname(__file__), "../qml/OrderedImageList.qml")
             )
         )
-        self.view.setResizeMode(QQuickWidget.SizeRootObjectToView)
+        self.view.setResizeMode(QQuickWidget.ResizeMode.SizeRootObjectToView)
         layout.addWidget(self.view)
 
     def config(self):
