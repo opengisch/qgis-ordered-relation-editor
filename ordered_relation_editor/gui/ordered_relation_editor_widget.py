@@ -12,6 +12,7 @@ import os
 from qgis.core import QgsApplication, QgsFeature, QgsMessageLog
 from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm, QgsScrollArea
 from qgis.PyQt.QtCore import QModelIndex, QTimer, QUrl
+
 try:
     from qgis.PyQt.QtQuickWidgets import QQuickWidget
 except ImportError:
