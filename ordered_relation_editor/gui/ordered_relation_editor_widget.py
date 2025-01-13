@@ -12,7 +12,12 @@ import os
 from qgis.core import QgsApplication, QgsFeature, QgsMessageLog
 from qgis.gui import QgsAbstractRelationEditorWidget, QgsAttributeForm, QgsScrollArea
 from qgis.PyQt.QtCore import QModelIndex, QTimer, QUrl
-from qgis.PyQt.QtQuickWidgets import QQuickWidget
+
+try:
+    from qgis.PyQt.QtQuickWidgets import QQuickWidget
+except ImportError:
+    # https://github.com/qgis/QGIS/pull/60123
+    from PyQt5.QtQuickWidgets import QQuickWidget
 from qgis.PyQt.QtWidgets import QVBoxLayout
 from qgis.PyQt.uic import loadUiType
 
