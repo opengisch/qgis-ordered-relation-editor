@@ -1,12 +1,12 @@
 [general]
 name=Ordered Relation Editor
 qgisMinimumVersion=3.18
+qgisMaximumVersion=4.99
 description=Provides a relation editor widget to handle ordered relations
 about=Provides a relation editor widget to handle ordered relations
 version=dev
 author=OPENGIS.ch
 email=info@opengis.ch
-supportsQt6=yes
 
 # Tags are comma separated with spaces allowed
 tags=relation
